@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#cadff3" id="theme-color-meta" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>StudyFlow — Advanced Frosted Glass Task & Study Suite</title>
+  <meta name="description" content="StudyFlow is an advanced, aesthetic glassmorphic task manager with Pomodoro focus timer, ambient sounds, subtasks, and productivity analytics." />
+  
+  <!-- Modern Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body data-theme="sky">
+  <!-- Interactive Ambient Background Mesh -->
+  <div class="ambient-background" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-layout">
+    <!-- Top Floating Navigation / Utility Bar -->
+    <header class="top-nav">
+      <div class="nav-brand">
+        <span class="status-dot"></span>
+        <span class="brand-tag">STUDYFLOW PRO</span>
+      </div>
+
+      <div class="nav-controls">
+        <!-- Ambient Sound Toggle -->
+        <div class="dropdown-container" id="sound-dropdown-container">
+          <button class="nav-btn" id="sound-toggle-btn" title="Ambient Focus Sounds" aria-label="Ambient Focus Sounds">
+            <svg class="icon sound-speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            <div class="sound-equalizer" id="sound-equalizer" style="display: none;">
+              <span class="eq-bar eq-1"></span>
+              <span class="eq-bar eq-2"></span>
+              <span class="eq-bar eq-3"></span>
+            </div>
+            <span class="btn-label" id="sound-current-label">Sound</span>
+          </button>
+          <div class="dropdown-menu sound-menu" id="sound-menu">
+            <div class="menu-header">Ambient Soundscape</div>
+            <div class="sound-options">
+              <button class="sound-option active" data-sound="off">
+                <span class="sound-icon">🔇</span> Off
+              </button>
+              <button class="sound-option" data-sound="rain">
+                <span class="sound-icon">🌧️</span> Gentle Rain
+              </button>
+              <button class="sound-option" data-sound="waves">
+                <span class="sound-icon">🌊</span> Ocean Waves
+              </button>
+              <button class="sound-option" data-sound="brown">
+                <span class="sound-icon">☕</span> Deep Focus Noise
+              </button>
+            </div>
+            <div class="volume-slider-box">
+              <label for="ambient-volume">Volume</label>
+              <input type="range" id="ambient-volume" min="0" max="100" value="45" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Focus / Pomodoro Toggle Button -->
+        <button class="nav-btn" id="pomodoro-toggle-btn" title="Focus Pomodoro Timer" aria-label="Toggle Focus Timer">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span class="btn-label" id="pomo-nav-label">Focus Timer</span>
+        </button>
+
+        <!-- Stats & Analytics Modal Button -->
+        <button class="nav-btn" id="stats-toggle-btn" title="Productivity Analytics" aria-label="Open Statistics">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span class="btn-label">Stats</span>
+        </button>
+
+        <!-- Theme Switcher -->
+        <div class="dropdown-container" id="theme-dropdown-container">
+          <button class="nav-btn icon-only" id="theme-btn" title="Change Theme" aria-label="Change Theme">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <div class="dropdown-menu theme-menu" id="theme-menu">
+            <div class="menu-header">Color Themes (9 Styles)</div>
+            <div class="theme-options-grid">
+              <button class="theme-option active" data-theme="sky">
+                <span class="theme-swatch sky-swatch"></span>
+                <span class="theme-name">Sky Mist</span>
+              </button>
+              <button class="theme-option" data-theme="midnight">
+                <span class="theme-swatch midnight-swatch"></span>
+                <span class="theme-name">Midnight Glass</span>
+              </button>
+              <button class="theme-option" data-theme="cyberpunk">
+                <span class="theme-swatch cyberpunk-swatch"></span>
+                <span class="theme-name">Tokyo Cyber</span>
+              </button>
+              <button class="theme-option" data-theme="latte">
+                <span class="theme-swatch latte-swatch"></span>
+                <span class="theme-name">Cozy Latte</span>
+              </button>
+              <button class="theme-option" data-theme="sunset">
+                <span class="theme-swatch sunset-swatch"></span>
+                <span class="theme-name">Peach Sunset</span>
+              </button>
+              <button class="theme-option" data-theme="arctic">
+                <span class="theme-swatch arctic-swatch"></span>
+                <span class="theme-name">Arctic Frost</span>
+              </button>
+              <button class="theme-option" data-theme="sakura">
+                <span class="theme-swatch sakura-swatch"></span>
+                <span class="theme-name">Sakura Bloom</span>
+              </button>
+              <button class="theme-option" data-theme="emerald">
+                <span class="theme-swatch emerald-swatch"></span>
+                <span class="theme-name">Emerald Zen</span>
+              </button>
+              <button class="theme-option" data-theme="amoled">
+                <span class="theme-swatch amoled-swatch"></span>
+                <span class="theme-name">OLED Carbon</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings / Data Modal Button -->
+        <button class="nav-btn icon-only" id="settings-btn" title="Backup & Presets" aria-label="Settings and Data">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Title Section matching reference image -->
+      <section class="hero-section">
+        <span class="sub-header">STUDYFLOW</span>
+        <div class="hero-title-row">
+          <h1 class="main-title" id="page-title">Today's Tasks</h1>
+          <div class="current-date-badge" id="current-date-badge">Monday, Oct 26</div>
+        </div>
+      </section>
+
+      <!-- Integrated Pomodoro Focus Panel (Collapsible) -->
+      <section class="glass-card pomodoro-card collapsed" id="pomodoro-panel">
+        <div class="pomodoro-header">
+          <div class="pomodoro-tabs">
+            <button class="pomo-tab active" data-mode="focus">Study (25m)</button>
+            <button class="pomo-tab" data-mode="short">Short Break (5m)</button>
+            <button class="pomo-tab" data-mode="long">Long Break (15m)</button>
+          </div>
+          <button class="pomo-close-btn" id="pomo-close-btn" title="Minimize Timer">✕</button>
+        </div>
+
+        <div class="pomodoro-body">
+          <div class="timer-display-wrap">
+            <div class="timer-display" id="timer-display">25:00</div>
+            <div class="timer-task-label" id="timer-task-label">No task selected for focus</div>
+          </div>
+          <div class="pomodoro-actions">
+            <button class="pomo-btn primary" id="timer-toggle-btn">Start Focus</button>
+            <button class="pomo-btn secondary" id="timer-reset-btn">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Overview Card (Exact visual upgrade of the image card) -->
+      <section class="glass-card overview-card" id="overview-card">
+        <div class="overview-top-row">
+          <div class="overview-left">
+            <h2 class="overview-heading">Overview</h2>
+            <div class="streak-badge" id="streak-badge" title="Daily Completion Streak">
+              <span class="fire-icon">🔥</span>
+              <span id="streak-count">1</span> day streak
+            </div>
+          </div>
+
+          <div class="overview-badges">
+            <div class="stat-badge">
+              <span class="badge-num" id="total-count">0</span>
+              <span class="badge-label">TOTAL</span>
+            </div>
+            <div class="stat-badge highlight">
+              <span class="badge-num highlight-num" id="done-count">0</span>
+              <span class="badge-label highlight-label">DONE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar with Percentage Indicator -->
+        <div class="progress-container">
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="progress-status-row">
+            <span class="progress-text" id="progress-percentage-text">0% completed</span>
+            <span class="progress-details" id="remaining-count-text">0 tasks remaining</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Task Creator Input Section (Matches image pill input + expandable advanced options) -->
+      <section class="task-creator-section">
+        <div class="creator-main-bar glass-pill-container">
+          <div class="input-icon-wrap">
+            <svg class="search-or-add-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="new-task-input" 
+            class="glass-input" 
+            placeholder="Add a new task..." 
+            autocomplete="off"
+            aria-label="Add a new task"
+          />
+          <button class="advanced-toggle-btn" id="advanced-toggle-btn" title="More Options (Priority, Category, Subtasks)">
+            <svg class="slider-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+              <line x1="1" y1="14" x2="7" y2="14"></line>
+              <line x1="9" y1="8" x2="15" y2="8"></line>
+              <line x1="17" y1="16" x2="23" y2="16"></line>
+            </svg>
+          </button>
+          <button class="primary-pill-btn" id="add-task-btn">Add</button>
+        </div>
+
+        <!-- Expandable Advanced Task Creation drawer -->
+        <div class="advanced-creator-drawer glass-card collapsed" id="advanced-drawer">
+          <div class="drawer-grid">
+            <div class="drawer-field">
+              <label for="task-category-select">Category</label>
+              <select id="task-category-select" class="glass-select">
+                <option value="Study">📚 Study</option>
+                <option value="Coding">💻 Coding</option>
+                <option value="Project">🚀 Project</option>
+                <option value="Exam">📝 Exam Prep</option>
+                <option value="Reading">📖 Reading</option>
+                <option value="Personal">🧘 Personal</option>
+              </select>
+            </div>
+
+            <div class="drawer-field">
+              <label for="task-priority-select">Priority</label>
+              <select id="task-priority-select" class="glass-select">
+                <option value="low">🟢 Normal</option>
+                <option value="medium" selected>🟡 Medium</option>
+                <option value="high">🔴 High / Urgent</option>
+              </select>
+            </div>
+
+            <div class="drawer-field">
+              <label for="task-due-date">Due Date</label>
+              <input type="date" id="task-due-date" class="glass-date-input" />
+            </div>
+
+            <div class="drawer-field">
+              <label for="task-pomodoros">Estimated Focus (25m blocks)</label>
+              <div class="pomo-stepper">
+                <button type="button" class="stepper-btn" id="pomo-step-dec">-</button>
+                <span class="stepper-val" id="pomo-step-val">1</span>
+                <button type="button" class="stepper-btn" id="pomo-step-inc">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer-field subtasks-creator-field">
+            <label>Subtasks Breakdown (Optional)</label>
+            <div class="subtask-input-row">
+              <input type="text" id="drawer-subtask-input" class="glass-input-sm" placeholder="Add a step (e.g., Read chapter 1)..." />
+              <button type="button" class="glass-pill-btn-sm" id="drawer-add-subtask-btn">Add Step</button>
+            </div>
+            <ul class="drawer-subtask-list" id="drawer-subtask-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Task Filter & Search Toolbar -->
+      <section class="toolbar-section">
+        <div class="search-box glass-pill-container-sm">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-tasks-input" placeholder="Search tasks or tags..." class="search-input" />
+          <button class="clear-search-btn" id="clear-search-btn" style="display: none;">✕</button>
+        </div>
+
+        <div class="toolbar-subrow">
+          <div class="filter-pills-scroll">
+            <button class="filter-pill active" data-filter="all">All</button>
+            <button class="filter-pill" data-filter="active">Active</button>
+            <button class="filter-pill" data-filter="high">Urgent</button>
+            <button class="filter-pill" data-filter="study">Study</button>
+            <button class="filter-pill" data-filter="done">Completed</button>
+          </div>
+
+          <div class="sort-container">
+            <select id="sort-tasks-select" class="glass-select sort-select" title="Sort tasks">
+              <option value="default">↕️ Default Sort</option>
+              <option value="priority">🔴 Priority First</option>
+              <option value="dueDate">📅 Due Date</option>
+              <option value="alpha">🔤 Alphabetical</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Task List Area -->
+      <section class="tasks-container">
+        <!-- Empty State Card (Exact layout & aesthetic from image) -->
+        <div class="glass-card empty-state-card" id="empty-state-card">
+          <div class="empty-icon-wrap">
+            <svg class="sparkle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"></path>
+            </svg>
+          </div>
+          <h3 class="empty-title">No tasks yet</h3>
+          <p class="empty-subtitle">Add one above to get started</p>
+          <div class="empty-presets-row">
+            <button class="preset-btn" id="load-sample-btn">✨ Study Sprint</button>
+            <button class="preset-btn" data-preset-quick="coding">💻 Coding Sprint</button>
+            <button class="preset-btn" data-preset-quick="daily">☀️ Daily Routine</button>
+          </div>
+        </div>
+
+        <!-- Task List Items -->
+        <ul class="task-list" id="task-list" aria-label="Task list"></ul>
+      </section>
+
+      <!-- Bottom Tagline matching screenshot -->
+      <footer class="app-footer">
+        <p class="footer-tagline">SAVED LOCALLY · NO ACCOUNT NEEDED</p>
+        <div class="keyboard-hints">
+          <span><kbd>Enter</kbd> Add Task</span>
+          <span><kbd>/</kbd> Quick Search</span>
+          <span><kbd>Esc</kbd> Close</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Edit Task Modal -->
+  <div class="modal-backdrop" id="edit-modal-backdrop">
+    <div class="modal-card glass-card" role="dialog" aria-labelledby="modal-title">
+      <div class="bottom-sheet-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h3 id="modal-title">Edit Task</h3>
+        <button class="modal-close-btn" id="modal-close-btn">✕</button>
+      </div>
+      <form id="edit-task-form">
+        <input type="hidden" id="edit-task-id" />
+        <div class="form-group">
+          <label for="edit-task-title">Task Title</label>
+          <input type="text" id="edit-task-title" class="glass-input" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-task-category">Category</label>
+            <select id="edit-task-category" class="glass-select">
+              <option value="Study">📚 Study</option>
+              <option value="Coding">💻 Coding</option>
+              <option value="Project">🚀 Project</option>
+              <option value="Exam">📝 Exam Prep</option>
+              <option value="Reading">📖 Reading</option>
+              <option value="Personal">🧘 Personal</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-task-priority">Priority</label>
+            <select id="edit-task-priority" class="glass-select">
+              <option value="low">🟢 Normal</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="high">🔴 High / Urgent</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-task-due">Due Date</label>
+            <input type="date" id="edit-task-due" class="glass-date-input" />
+          </div>
+          <div class="form-group">
+            <label for="edit-task-pomos">Target Pomodoros</label>
+            <input type="number" id="edit-task-pomos" min="1" max="10" value="1" class="glass-input" />
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="pomo-btn secondary" id="edit-modal-cancel">Cancel</button>
+          <button type="submit" class="pomo-btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Statistics & Productivity Modal -->
+  <div class="modal-backdrop" id="stats-modal-backdrop">
+    <div class="modal-card glass-card stats-modal-content" role="dialog">
+      <div class="bottom-sheet-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h3>Productivity Insights</h3>
+        <button class="modal-close-btn" id="stats-close-btn">✕</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-giant" id="stats-total-completed">0</span>
+          <span class="stat-name">Completed Tasks</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-giant" id="stats-completion-rate">0%</span>
+          <span class="stat-name">Efficiency Rate</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-giant" id="stats-focus-minutes">0m</span>
+          <span class="stat-name">Focus Time</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-giant" id="stats-current-streak">1🔥</span>
+          <span class="stat-name">Current Streak</span>
+        </div>
+      </div>
+      <div class="category-breakdown">
+        <h4>Task Distribution by Category</h4>
+        <div id="category-bars-list" class="category-bars-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings & Data Modal -->
+  <div class="modal-backdrop" id="settings-modal-backdrop">
+    <div class="modal-card glass-card" role="dialog">
+      <div class="bottom-sheet-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h3>Data & Backups</h3>
+        <button class="modal-close-btn" id="settings-close-btn">✕</button>
+      </div>
+      <div class="settings-content">
+        <p class="settings-desc">Your StudyFlow data is stored privately on your device. You can export a snapshot backup anytime or load preset templates.</p>
+        
+        <div class="settings-action-row">
+          <button class="pomo-btn secondary" id="export-data-btn">📥 Export Backup (JSON)</button>
+          <label class="pomo-btn secondary file-upload-label">
+            📤 Restore Backup
+            <input type="file" id="import-data-input" accept=".json" style="display:none;" />
+          </label>
+        </div>
+
+        <div class="settings-divider"></div>
+
+        <div class="settings-presets">
+          <h4>Productivity Presets</h4>
+          <div class="preset-buttons-grid">
+            <button class="preset-item-btn" data-preset="exam">📝 Final Exam Sprint</button>
+            <button class="preset-item-btn" data-preset="coding">💻 Web Dev Hackathon</button>
+            <button class="preset-item-btn" data-preset="daily">☀️ Balanced Daily Routine</button>
+          </div>
+        </div>
+
+        <div class="settings-divider"></div>
+
+        <div class="settings-danger-zone">
+          <button class="danger-btn" id="clear-all-data-btn">Clear All Tasks</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
