@@ -1,86 +1,107 @@
-# StudyFlow Pro — Aesthetic Glassmorphic Task & Study Suite ✨
+# StudyFlow Pro — Intelligent Glassmorphic Task & Study Suite ✨
 
-StudyFlow Pro is a modern, glassmorphic productivity web application designed to help students and developers stay in the flow state. It integrates a **Pomodoro Focus Timer**, **Ambient Focus Sounds**, **Subtask breakdowns**, and **Productivity Analytics** with 9 curated themes and a mobile-first responsive design.
+StudyFlow Pro is a modern, full-featured glassmorphic productivity and study application. It blends aesthetic focus with powerful productivity architectures including **Multi-View Task Management (Kanban, Eisenhower Matrix, Timeline)**, **Pomodoro Focus Engine with Custom Audio & Soundscapes**, **RPG Gamification & Mastery Badges**, **Active Recall 3D Flashcards**, **Voice Speech-to-Text**, and **Spotlight Command Palette (Ctrl+K)**.
 
----
-
-## 🚀 Features
-
-- **💎 Frosted Glassmorphism Design System**: Modern visual aesthetics with dynamic ambient mesh lighting and smooth micro-animations.
-- **📱 Mobile-First Responsive**: Custom touch targets, native iOS/Android style bottom sheets, and notch/safe-area optimization.
-- **🎨 9 Curated Aesthetic Themes**:
-  - Sky Mist (Default)
-  - Midnight Glass (Dark Obsidian)
-  - Tokyo Cyber (Neon Synthwave)
-  - Cozy Latte (Warm Minimalist)
-  - Peach Sunset (Vibrant Gradient)
-  - Arctic Frost (Cool Cyan)
-  - Sakura Bloom (Soft Pastel Pink)
-  - Emerald Zen (Nature Calm)
-  - OLED Carbon (Pure Deep Black)
-- **🍅 Integrated Pomodoro Timer**: Study (25m), Short Break (5m), and Long Break (15m) sessions with session celebration confetti.
-- **🎧 Ambient Soundscapes**: Rain, Ocean Waves, and Focus Noise with dedicated volume control and equalizer indicator.
-- **📋 Subtasks & Priority Filtering**: Break down complex tasks into checkable steps, filter by urgency (High, Medium, Normal) or category (Study, Coding, Project, Exam Prep, Reading, Personal).
-- **📊 Productivity Insights**: Live efficiency rates, streak counters, focus minutes, and categorical task distributions.
-- **💾 100% Private & Local Storage**: No database or login required. Includes full JSON export and restore backups.
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Built with Vanilla JS](https://img.shields.io/badge/built%20with-Vanilla%20JS-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Vite](https://img.shields.io/badge/bundled%20with-Vite-646CFF.svg)](https://vitejs.dev/)
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 What's New & Core Features
 
-- **HTML5 & Vanilla JavaScript (ES6 Modules)**: Fast, lightweight, zero-bloat architecture.
-- **Pure Modern CSS**: Custom properties (CSS variables), glassmorphism filters, clamp typography, and responsive media queries.
-- **Vite**: Ultra-fast local development server and optimized production bundler.
+### 🔀 1. Multi-View Workspace
+- **📋 Classic List View**: Detailed task rows with expandable steps, tags, and notes.
+- **📑 Kanban Board**: 3-column workflow (To Do, In Progress, Completed) with one-click status transitions.
+- **🎯 Eisenhower Matrix**: 4-quadrant strategic prioritization (Do First, Schedule/Focus, Quick Wins, Someday).
+- **📅 Due Timeline**: Automatically groups tasks into *Overdue*, *Due Today*, *Due Tomorrow*, and *Upcoming*.
+
+### 🧠 2. Smart Natural Language Parsing & AI Task Breakdown
+- **Smart Quick Add**: Automatically parses syntax like `Physics Exam tomorrow !high @Study #formula 2pomo`.
+- **✨ Magic AI Breakdown**: Decomposes any goal or assignment into 3–5 actionable, structured steps with one click.
+- **🎙️ Voice Recognition**: Speak your tasks hands-free using the Web Speech API.
+
+### 🎧 3. Soundscape Engine & Custom User Audio
+- **Procedural Synthesizers**: Gentle Rain, Ocean Waves, Deep Focus Noise, Campfire Ember, 432Hz Alpha Waves, and Clock Ticking.
+- **🎵 Custom Audio Upload**: Upload and loop your own MP3, WAV, or Lo-Fi audio files with automatic IndexedDB offline persistence.
+- **Visual Audio Equalizer**: Dynamic pulsing equalizer responding to active audio.
+
+### 🎮 4. RPG Gamification & Mastery Badges
+- **XP Progression**: Earn XP on tasks (+50 XP), subtasks (+15 XP), and Pomodoro sessions (+100 XP).
+- **Levels**: Progress from *Novice Flow* to *Focus Grandmaster* and *Zenith Sovereign*.
+- **🏆 7 Unlockable Badges**: First Flow, Flame Keeper, Focus Titan, Momentum, Scholar Pro, Zen Mind, and Total Victory.
+
+### 🎴 5. Active Recall 3D Flashcards
+- Practice study tasks and lecture notes with smooth 3D card flips (Spacebar / Click).
+- Rate confidence (*Mastered +15 XP* or *Review Again*).
+
+### ⚡ 6. Spotlight Command Palette (`Ctrl + K`)
+- Lightning-fast keyboard launcher to search tasks, toggle Zen mode, switch themes, and execute app actions.
+
+### 🧘 7. Fullscreen Zen Focus Mode (`Z`)
+- Minimalist distraction-free interface with pulsing breathing ring, oversized digital timer, and inspiring quotes.
+
+### 📝 8. Floating Quick Scratchpad
+- Bottom-right thought dock with instant auto-save and one-click *Convert note line to Task*.
+
+### 📊 9. Deep Analytics & 30-Day Heatmap
+- GitHub-style 30-day activity matrix, 7-day completion chart, and export options (Markdown, CSV, Printable Agenda).
 
 ---
 
-## 💻 Quick Start & Installation
+## 🎨 9 Curated Glassmorphic Themes
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/studyflow-task-manager.git
-cd studyflow-task-manager
-```
-
-### 2. Install dependencies
-```bash
-npm install
-```
-
-### 3. Run development server
-```bash
-npm run dev
-```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-### 4. Build for production
-```bash
-npm run build
-```
+- **Sky Mist** (Default calm blue)
+- **Midnight Glass** (Dark obsidian)
+- **Tokyo Cyber** (Neon synthwave)
+- **Cozy Latte** (Warm earth tones)
+- **Peach Sunset** (Vibrant gradient)
+- **Arctic Frost** (Clean cold cyan)
+- **Sakura Bloom** (Soft pastel pink)
+- **Emerald Zen** (Relaxing forest green)
+- **OLED Carbon** (Pure black contrast)
 
 ---
 
-## 📂 Project Structure
+## ⌨️ Global Keyboard Shortcuts
 
-```text
-Task-Manager/
-├── css/
-│   └── style.css          # Design system, glassmorphism tokens & mobile responsive styles
-├── js/
-│   ├── app.js             # Main application controller & UI interactions
-│   ├── audio.js           # Ambient sound engine & audio synthesizer
-│   ├── confetti.js        # Canvas confetti celebrations
-│   ├── pomodoro.js        # Pomodoro timer state engine
-│   └── storage.js         # LocalStorage persistence & template presets
-├── index.html             # Main entry document
-├── package.json           # Project metadata & scripts
-├── package-lock.json      # Dependency lockfile
-├── .gitignore             # Files excluded from git
-└── README.md              # Project documentation
-```
+| Shortcut | Action |
+|---|---|
+| `Ctrl + K` / `Cmd + K` | Open Spotlight Command Palette |
+| `Z` | Toggle Fullscreen Zen Focus Mode |
+| `Spacebar` | Flip Active Recall Flashcard |
+| `/` | Focus Quick Search Bar |
+| `Enter` | Submit / Add Task |
+| `Esc` | Close Modals, Command Palette & Zen Mode |
+
+---
+
+## 💻 Installation & Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Anupam477/Task-Manager.git
+   cd Task-Manager
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start local development server:**
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:5173` in your browser.
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
 
 ---
 
 ## 📄 License
 
-MIT License — feel free to use, modify, and build upon this project.
+MIT License © 2026 Anupam Singh. Open source and free for personal & educational use.
