@@ -46,6 +46,7 @@ class StudyFlowApp {
     this.initDate();
     this.initTheme();
     this.initPomodoro();
+    this.initCustomAudio();
     this.initGamification();
     this.initScratchpad();
     this.initSpeechRecognition();
@@ -148,6 +149,13 @@ class StudyFlowApp {
     this.soundCurrentLabel = document.getElementById('sound-current-label');
     this.ambientVolumeSlider = document.getElementById('ambient-volume');
     this.soundEqualizer = document.getElementById('sound-equalizer');
+
+    // Custom Audio Elements
+    this.customAudioFileInput = document.getElementById('custom-audio-file-input');
+    this.customSoundPill = document.getElementById('custom-sound-pill');
+    this.customSoundName = document.getElementById('custom-sound-name');
+    this.customSoundDelBtn = document.getElementById('custom-sound-del-btn');
+    this.customUploadText = document.getElementById('custom-upload-text');
 
     this.themeBtn = document.getElementById('theme-btn');
     this.themeDropdown = document.getElementById('theme-dropdown-container');
@@ -327,6 +335,9 @@ class StudyFlowApp {
         const currentActive = document.querySelector('.sound-option.active');
         const currentSound = currentActive ? currentActive.dataset.sound : 'off';
         const sounds = ['off', 'rain', 'waves', 'brown', 'campfire', 'binaural', 'clock'];
+        if (soundManager.customAudio) {
+          sounds.push('custom');
+        }
         const nextIndex = (sounds.indexOf(currentSound) + 1) % sounds.length;
         const nextSound = sounds[nextIndex];
 
@@ -334,6 +345,9 @@ class StudyFlowApp {
         this.soundOptions.forEach(opt => {
           opt.classList.toggle('active', opt.dataset.sound === nextSound);
         });
+        if (this.customSoundPill) {
+          this.customSoundPill.classList.toggle('active', nextSound === 'custom');
+        }
 
         const soundLabels = {
           off: 'Sound 🔇',
@@ -342,7 +356,8 @@ class StudyFlowApp {
           brown: 'Noise ☕',
           campfire: 'Campfire 🔥',
           binaural: 'Alpha 🧠',
-          clock: 'Clock ⏱️'
+          clock: 'Clock ⏱️',
+          custom: 'Custom 🎵'
         };
         this.soundCurrentLabel.textContent = soundLabels[nextSound] || 'Sound';
         this.zenSoundToggleBtn.textContent = `🔊 ${soundLabels[nextSound] || 'Ambient'}`;
@@ -387,6 +402,80 @@ class StudyFlowApp {
     if (document.exitFullscreen && document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
+  }
+
+  /* ---------------- Custom User Audio System ---------------- */
+
+  async initCustomAudio() {
+    try {
+      const saved = await soundManager.loadSavedCustomTrack();
+      if (saved) {
+        this.customSoundPill.style.display = 'flex';
+        this.customSoundDelBtn.style.display = 'inline-block';
+        this.customSoundName.textContent = saved.name;
+        this.customUploadText.textContent = 'Change Audio';
+      }
+    } catch (e) {}
+
+    this.customAudioFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('audio/')) {
+        this.showToast('Please select a valid audio file (MP3, WAV, OGG, etc.)');
+        return;
+      }
+
+      const trackName = await soundManager.setCustomTrack(file);
+      if (trackName) {
+        this.customSoundPill.style.display = 'flex';
+        this.customSoundDelBtn.style.display = 'inline-block';
+        this.customSoundName.textContent = trackName;
+        this.customUploadText.textContent = 'Change Audio';
+
+        this.activateCustomTrack();
+        this.showToast(`🎵 Custom audio loaded: ${trackName}`);
+      }
+    });
+
+    this.customSoundPill.addEventListener('click', () => {
+      this.activateCustomTrack();
+      this.soundDropdown.classList.remove('open');
+    });
+
+    this.customSoundDelBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      soundManager.playClickSound();
+      await soundManager.removeCustomTrack();
+      this.customSoundPill.style.display = 'none';
+      this.customSoundDelBtn.style.display = 'none';
+      this.customUploadText.textContent = 'Upload Custom Audio (MP3/WAV)';
+      this.customSoundPill.classList.remove('active');
+
+      // Revert to Off
+      soundManager.startAmbient('off');
+      this.soundCurrentLabel.textContent = 'Sound';
+      if (this.soundEqualizer) this.soundEqualizer.style.display = 'none';
+      const offOpt = document.querySelector('.sound-option[data-sound="off"]');
+      if (offOpt) {
+        this.soundOptions.forEach(o => o.classList.remove('active'));
+        offOpt.classList.add('active');
+      }
+      this.showToast('Custom audio removed');
+    });
+  }
+
+  activateCustomTrack() {
+    soundManager.playClickSound();
+    this.soundOptions.forEach(o => o.classList.remove('active'));
+    this.customSoundPill.classList.add('active');
+
+    soundManager.startAmbient('custom');
+    if (this.soundEqualizer) this.soundEqualizer.style.display = 'inline-flex';
+
+    const name = this.customSoundName.textContent || 'Custom Track';
+    const shortName = name.length > 9 ? name.substring(0, 9) + '..' : name;
+    this.soundCurrentLabel.textContent = `${shortName} 🎵`;
   }
 
   /* ---------------- Gamification & XP System ---------------- */
@@ -541,7 +630,8 @@ class StudyFlowApp {
       { id: 'theme_midnight', title: 'Set Theme: Midnight Glass', category: 'Theme', icon: '🌙', action: () => { this.closeCommandPalette(); this.applyTheme('midnight'); } },
       { id: 'theme_cyberpunk', title: 'Set Theme: Tokyo Cyber', category: 'Theme', icon: '⚡', action: () => { this.closeCommandPalette(); this.applyTheme('cyberpunk'); } },
       { id: 'theme_latte', title: 'Set Theme: Cozy Latte', category: 'Theme', icon: '☕', action: () => { this.closeCommandPalette(); this.applyTheme('latte'); } },
-      { id: 'theme_amoled', title: 'Set Theme: OLED Carbon', category: 'Theme', icon: '🖤', action: () => { this.closeCommandPalette(); this.applyTheme('amoled'); } }
+      { id: 'theme_amoled', title: 'Set Theme: OLED Carbon', category: 'Theme', icon: '🖤', action: () => { this.closeCommandPalette(); this.applyTheme('amoled'); } },
+      { id: 'upload_audio', title: 'Upload Custom Focus Audio (MP3/WAV)', category: 'Audio', icon: '🎵', action: () => { this.closeCommandPalette(); this.customAudioFileInput.click(); } }
     ];
 
     // Add matching tasks
@@ -944,6 +1034,7 @@ class StudyFlowApp {
       opt.addEventListener('click', () => {
         soundManager.playClickSound();
         this.soundOptions.forEach(o => o.classList.remove('active'));
+        if (this.customSoundPill) this.customSoundPill.classList.remove('active');
         opt.classList.add('active');
         const soundType = opt.dataset.sound;
         soundManager.startAmbient(soundType);

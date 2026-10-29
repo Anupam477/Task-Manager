@@ -1,7 +1,67 @@
 /**
  * StudyFlow Web Audio Engine
- * Pure procedural synthesis for UI chimes & ambient study soundscapes (zero external asset dependencies)
+ * Pure procedural synthesis for UI chimes & ambient study soundscapes,
+ * plus custom user audio file playback (MP3/WAV/OGG) with IndexedDB persistence.
  */
+
+class AudioStorage {
+  static openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('StudyFlowAudioDB', 1);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('tracks')) {
+          db.createObjectStore('tracks');
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  static async saveTrack(name, blob) {
+    try {
+      const db = await this.openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('tracks', 'readwrite');
+        const store = tx.objectStore('tracks');
+        store.put({ name, blob, date: Date.now() }, 'current_track');
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) {
+      console.warn('Failed to save audio to IndexedDB:', e);
+    }
+  }
+
+  static async loadTrack() {
+    try {
+      const db = await this.openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('tracks', 'readonly');
+        const store = tx.objectStore('tracks');
+        const req = store.get('current_track');
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static async clearTrack() {
+    try {
+      const db = await this.openDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('tracks', 'readwrite');
+        const store = tx.objectStore('tracks');
+        store.delete('current_track');
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    } catch (e) {}
+  }
+}
 
 class AudioEngine {
   constructor() {
@@ -11,6 +71,9 @@ class AudioEngine {
     this.isMuted = false;
     this.volume = 0.45;
     this.activeNodes = [];
+    this.customAudio = null;
+    this.customTrackName = '';
+    this.customAudioUrl = null;
   }
 
   init() {
@@ -130,12 +193,73 @@ class AudioEngine {
     } catch (e) {}
   }
 
+  /* ---------------- Custom User Audio Support ---------------- */
+
+  async loadSavedCustomTrack() {
+    try {
+      const record = await AudioStorage.loadTrack();
+      if (record && record.blob) {
+        if (this.customAudioUrl) {
+          URL.revokeObjectURL(this.customAudioUrl);
+        }
+        this.customAudioUrl = URL.createObjectURL(record.blob);
+        this.customAudio = new Audio(this.customAudioUrl);
+        this.customAudio.loop = true;
+        this.customAudio.volume = this.volume;
+        this.customTrackName = record.name || 'Custom Track';
+        return { name: this.customTrackName };
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  async setCustomTrack(file) {
+    if (!file) return null;
+    this.stopAmbient();
+
+    if (this.customAudioUrl) {
+      URL.revokeObjectURL(this.customAudioUrl);
+    }
+
+    this.customAudioUrl = URL.createObjectURL(file);
+    this.customAudio = new Audio(this.customAudioUrl);
+    this.customAudio.loop = true;
+    this.customAudio.volume = this.volume;
+    this.customTrackName = file.name;
+
+    await AudioStorage.saveTrack(file.name, file);
+    return file.name;
+  }
+
+  async removeCustomTrack() {
+    this.stopAmbient();
+    if (this.customAudioUrl) {
+      URL.revokeObjectURL(this.customAudioUrl);
+      this.customAudioUrl = null;
+    }
+    this.customAudio = null;
+    this.customTrackName = '';
+    await AudioStorage.clearTrack();
+  }
+
   /**
-   * Procedural Ambient Focus Generators
+   * Start Ambient Sound: procedural preset or custom user audio
    */
   startAmbient(type) {
     this.stopAmbient();
     if (type === 'off') return;
+
+    // Custom user track playback
+    if (type === 'custom') {
+      if (this.customAudio) {
+        try {
+          this.customAudio.currentTime = 0;
+          this.customAudio.volume = this.volume;
+          this.customAudio.play().catch(err => console.warn('Custom audio playback error:', err));
+        } catch (e) {}
+      }
+      return;
+    }
 
     try {
       this.init();
@@ -150,7 +274,6 @@ class AudioEngine {
       const output = noiseBuffer.getChannelData(0);
 
       if (type === 'rain') {
-        // Rain sound simulation: filtered pink noise
         let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
@@ -178,7 +301,6 @@ class AudioEngine {
         this.activeNodes.push(whiteNoise);
 
       } else if (type === 'brown') {
-        // Deep Brown Noise
         let lastOut = 0.0;
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
@@ -201,7 +323,6 @@ class AudioEngine {
         this.activeNodes.push(noise);
 
       } else if (type === 'waves') {
-        // Ocean Wave simulation with LFO swelling
         let lastOut = 0.0;
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
@@ -233,7 +354,6 @@ class AudioEngine {
         this.activeNodes.push(noise, lfo);
 
       } else if (type === 'campfire') {
-        // Crackling campfire: low filtered rumble + periodic random crackle pops
         for (let i = 0; i < bufferSize; i++) {
           const white = Math.random() * 2 - 1;
           const crackle = Math.random() > 0.9985 ? (Math.random() * 2 - 1) * 3 : 0;
@@ -254,16 +374,15 @@ class AudioEngine {
         this.activeNodes.push(noise);
 
       } else if (type === 'binaural') {
-        // Alpha Waves (Focus Frequency): 432 Hz left, 442 Hz right = 10 Hz Alpha beat
         const merger = this.ctx.createChannelMerger(2);
 
         const oscL = this.ctx.createOscillator();
         oscL.type = 'sine';
-        oscL.frequency.setValueAtTime(216, this.ctx.currentTime); // Harmonic base
+        oscL.frequency.setValueAtTime(216, this.ctx.currentTime);
 
         const oscR = this.ctx.createOscillator();
         oscR.type = 'sine';
-        oscR.frequency.setValueAtTime(226, this.ctx.currentTime); // +10Hz Alpha difference
+        oscR.frequency.setValueAtTime(226, this.ctx.currentTime);
 
         const toneGain = this.ctx.createGain();
         toneGain.gain.setValueAtTime(0.12, this.ctx.currentTime);
@@ -278,8 +397,6 @@ class AudioEngine {
         this.activeNodes.push(oscL, oscR);
 
       } else if (type === 'clock') {
-        // Subtle rhythmic clock tick-tock
-        const interval = 1.0;
         let isTick = true;
 
         const playTick = () => {
@@ -311,12 +428,20 @@ class AudioEngine {
 
   setVolume(val) {
     this.volume = Math.max(0, Math.min(1, val));
+    if (this.customAudio) {
+      this.customAudio.volume = this.volume;
+    }
     if (this.ambientGain && this.ctx) {
       this.ambientGain.gain.setTargetAtTime(this.volume, this.ctx.currentTime, 0.05);
     }
   }
 
   stopAmbient() {
+    if (this.customAudio) {
+      try {
+        this.customAudio.pause();
+      } catch (e) {}
+    }
     if (this.tickTimer) {
       clearInterval(this.tickTimer);
       this.tickTimer = null;

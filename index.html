@@ -101,6 +101,27 @@
                 <span class="sound-icon">⏱️</span> Clock Ticking
               </button>
             </div>
+
+            <!-- Custom User Audio Track -->
+            <div class="custom-sound-box">
+              <div class="custom-sound-header">
+                <span>Custom Audio</span>
+                <button type="button" class="custom-sound-del-btn" id="custom-sound-del-btn" style="display: none;" title="Remove Audio">✕</button>
+              </div>
+              <button class="sound-option custom-sound-pill" id="custom-sound-pill" data-sound="custom" style="display: none;">
+                <span class="sound-icon">🎵</span>
+                <span class="custom-sound-name" id="custom-sound-name">My Audio</span>
+              </button>
+              <label class="custom-upload-label" id="custom-upload-label" for="custom-audio-file-input">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span id="custom-upload-text">Upload Custom Audio (MP3/WAV)</span>
+                <input type="file" id="custom-audio-file-input" accept="audio/*" style="display: none;" />
+              </label>
+            </div>
             <div class="volume-slider-box">
               <label for="ambient-volume">Volume</label>
               <input type="range" id="ambient-volume" min="0" max="100" value="45" />
