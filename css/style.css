@@ -2636,6 +2636,87 @@ body[data-theme="amoled"] .theme-option:hover {
     font-size: 0.8rem;
     justify-content: space-between;
   }
+
+  /* Mobile Gamification Level Pill */
+  .nav-btn.level-pill-btn {
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 3px 8px !important;
+    border-radius: var(--radius-pill) !important;
+    gap: 4px;
+    height: 36px;
+  }
+  .level-pill-btn .level-mini-progress {
+    display: none;
+  }
+  .level-pill-btn .btn-label {
+    display: inline-block !important;
+    font-size: 0.68rem;
+  }
+
+  /* View Switcher scroll on mobile */
+  .view-switcher-section {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 2px 0 6px 0;
+  }
+  .view-switcher-section::-webkit-scrollbar {
+    display: none;
+  }
+  .view-tabs-pill {
+    width: max-content;
+    padding: 3px;
+  }
+  .view-tab-btn {
+    padding: 5px 11px;
+    font-size: 0.74rem;
+  }
+
+  /* Command Palette on mobile */
+  .command-palette-backdrop {
+    padding-top: 8vh;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .command-palette-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Quick Scratchpad on mobile */
+  .floating-scratchpad-btn {
+    bottom: 20px;
+    right: 18px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
+  }
+  .scratchpad-drawer {
+    width: calc(100vw - 28px);
+    right: 14px;
+    bottom: 74px;
+    height: 320px;
+  }
+
+  /* Flashcards Modal on mobile */
+  .flashcard-scene {
+    height: 190px;
+  }
+  .flashcard-prompt {
+    font-size: 1rem;
+  }
+  .flashcard-controls .pomo-btn {
+    padding: 8px 12px;
+    font-size: 0.76rem;
+  }
+
+  /* Badges Grid on mobile */
+  .badges-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }
 
 /* Extra small mobile adjustments (e.g. 320px - 375px screens) */

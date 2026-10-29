@@ -5,16 +5,16 @@
 
 const CACHE_NAME = 'studyflow-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/audio.js',
-  '/js/pomodoro.js',
-  '/js/storage.js',
-  '/js/confetti.js',
-  '/js/ai-parser.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/app.js',
+  './js/audio.js',
+  './js/pomodoro.js',
+  './js/storage.js',
+  './js/confetti.js',
+  './js/ai-parser.js',
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -44,4 +44,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-

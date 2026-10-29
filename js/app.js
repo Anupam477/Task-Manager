@@ -2120,6 +2120,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Register Service Worker for offline PWA capabilities
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 });
