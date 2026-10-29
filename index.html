@@ -7,8 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="format-detection" content="telephone=no" />
-  <title>StudyFlow — Advanced Frosted Glass Task & Study Suite</title>
-  <meta name="description" content="StudyFlow is an advanced, aesthetic glassmorphic task manager with Pomodoro focus timer, ambient sounds, subtasks, and productivity analytics." />
+  <title>StudyFlow Pro — Intelligent Glassmorphic Task & Study Suite</title>
+  <meta name="description" content="StudyFlow Pro is an advanced aesthetic glassmorphic task suite with Pomodoro timer, ambient soundscapes, Kanban board, Eisenhower matrix, AI task breakdown, flashcards, and RPG gamification." />
   
   <!-- Modern Clean Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,6 +38,29 @@
       </div>
 
       <div class="nav-controls">
+        <!-- Gamification Level & XP Pill -->
+        <button class="nav-btn level-pill-btn" id="gamification-btn" title="View Level & Achievements" aria-label="Gamification Profile">
+          <span class="level-badge" id="nav-level-badge">Lv. 1</span>
+          <div class="level-mini-progress">
+            <div class="level-mini-fill" id="nav-level-fill" style="width: 0%"></div>
+          </div>
+          <span class="btn-label" id="nav-xp-label">0 XP</span>
+        </button>
+
+        <!-- Command Palette Trigger Button -->
+        <button class="nav-btn icon-only" id="command-palette-btn" title="Quick Command Palette (Ctrl+K)" aria-label="Command Palette">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- Active Recall Flashcards Button -->
+        <button class="nav-btn" id="flashcards-btn" title="Active Recall Flashcards" aria-label="Flashcards">
+          <span class="btn-icon">🎴</span>
+          <span class="btn-label">Recall</span>
+        </button>
+
         <!-- Ambient Sound Toggle -->
         <div class="dropdown-container" id="sound-dropdown-container">
           <button class="nav-btn" id="sound-toggle-btn" title="Ambient Focus Sounds" aria-label="Ambient Focus Sounds">
@@ -68,6 +91,15 @@
               <button class="sound-option" data-sound="brown">
                 <span class="sound-icon">☕</span> Deep Focus Noise
               </button>
+              <button class="sound-option" data-sound="campfire">
+                <span class="sound-icon">🔥</span> Campfire Ember
+              </button>
+              <button class="sound-option" data-sound="binaural">
+                <span class="sound-icon">🧠</span> 432Hz Alpha Waves
+              </button>
+              <button class="sound-option" data-sound="clock">
+                <span class="sound-icon">⏱️</span> Clock Ticking
+              </button>
             </div>
             <div class="volume-slider-box">
               <label for="ambient-volume">Volume</label>
@@ -76,13 +108,21 @@
           </div>
         </div>
 
+        <!-- Fullscreen Zen Mode Button -->
+        <button class="nav-btn icon-only" id="zen-mode-btn" title="Zen Distraction-Free Mode (Z)" aria-label="Zen Mode">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M3 12h1m16 0h1M12 3v1m0 16v1M5.6 5.6l.7.7m11.4 11.4l.7.7M5.6 18.4l.7-.7m11.4-11.4l.7-.7"></path>
+          </svg>
+        </button>
+
         <!-- Focus / Pomodoro Toggle Button -->
         <button class="nav-btn" id="pomodoro-toggle-btn" title="Focus Pomodoro Timer" aria-label="Toggle Focus Timer">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
-          <span class="btn-label" id="pomo-nav-label">Focus Timer</span>
+          <span class="btn-label" id="pomo-nav-label">Focus</span>
         </button>
 
         <!-- Stats & Analytics Modal Button -->
@@ -166,7 +206,7 @@
     <main class="main-content">
       <!-- Title Section matching reference image -->
       <section class="hero-section">
-        <span class="sub-header">STUDYFLOW</span>
+        <span class="sub-header">STUDYFLOW PRO</span>
         <div class="hero-title-row">
           <h1 class="main-title" id="page-title">Today's Tasks</h1>
           <div class="current-date-badge" id="current-date-badge">Monday, Oct 26</div>
@@ -181,7 +221,10 @@
             <button class="pomo-tab" data-mode="short">Short Break (5m)</button>
             <button class="pomo-tab" data-mode="long">Long Break (15m)</button>
           </div>
-          <button class="pomo-close-btn" id="pomo-close-btn" title="Minimize Timer">✕</button>
+          <div class="pomo-header-actions">
+            <button class="pomo-mini-zen-btn" id="pomo-zen-btn" title="Enter Fullscreen Zen Focus">🧘 Zen Mode</button>
+            <button class="pomo-close-btn" id="pomo-close-btn" title="Minimize Timer">✕</button>
+          </div>
         </div>
 
         <div class="pomodoro-body">
@@ -244,11 +287,23 @@
             type="text" 
             id="new-task-input" 
             class="glass-input" 
-            placeholder="Add a new task..." 
+            placeholder="Add task... (Try: Physics mock tomorrow !high @Study #exam 2pomo)" 
             autocomplete="off"
             aria-label="Add a new task"
           />
-          <button class="advanced-toggle-btn" id="advanced-toggle-btn" title="More Options (Priority, Category, Subtasks)">
+          
+          <!-- Voice Speech Recognition Input -->
+          <button class="voice-input-btn" id="voice-input-btn" title="Speak to add task (Voice Input)" aria-label="Voice Input">
+            <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+          </button>
+
+          <!-- Advanced drawer toggle -->
+          <button class="advanced-toggle-btn" id="advanced-toggle-btn" title="More Options (Priority, Category, Subtasks, Notes)">
             <svg class="slider-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="4" y1="21" x2="4" y2="14"></line>
               <line x1="4" y1="10" x2="4" y2="3"></line>
@@ -294,23 +349,91 @@
             </div>
 
             <div class="drawer-field">
-              <label for="task-pomodoros">Estimated Focus (25m blocks)</label>
+              <label for="task-recurring-select">Recurrence</label>
+              <select id="task-recurring-select" class="glass-select">
+                <option value="none" selected>Single Task</option>
+                <option value="daily">🔁 Daily Repeat</option>
+                <option value="weekdays">💼 Weekdays (Mon-Fri)</option>
+                <option value="weekly">📅 Weekly</option>
+              </select>
+            </div>
+
+            <div class="drawer-field">
+              <label for="task-pomodoros">Focus Blocks (25m)</label>
               <div class="pomo-stepper">
                 <button type="button" class="stepper-btn" id="pomo-step-dec">-</button>
                 <span class="stepper-val" id="pomo-step-val">1</span>
                 <button type="button" class="stepper-btn" id="pomo-step-inc">+</button>
               </div>
             </div>
+
+            <div class="drawer-field">
+              <label for="task-tags-input">Tags (#words)</label>
+              <input type="text" id="task-tags-input" class="glass-input-sm" placeholder="#exam #physics" />
+            </div>
+          </div>
+
+          <div class="drawer-field">
+            <label for="task-notes-input">Notes & Reference Links (Optional)</label>
+            <textarea id="task-notes-input" class="glass-textarea" rows="2" placeholder="Add study notes, textbook page numbers, reference links..."></textarea>
           </div>
 
           <div class="drawer-field subtasks-creator-field">
-            <label>Subtasks Breakdown (Optional)</label>
+            <div class="subtask-header-row">
+              <label>Action Steps Breakdown</label>
+              <button type="button" class="magic-breakdown-btn" id="magic-breakdown-btn" title="Auto-generate steps based on task title">
+                ✨ Magic AI Breakdown
+              </button>
+            </div>
             <div class="subtask-input-row">
               <input type="text" id="drawer-subtask-input" class="glass-input-sm" placeholder="Add a step (e.g., Read chapter 1)..." />
               <button type="button" class="glass-pill-btn-sm" id="drawer-add-subtask-btn">Add Step</button>
             </div>
             <ul class="drawer-subtask-list" id="drawer-subtask-list"></ul>
           </div>
+        </div>
+      </section>
+
+      <!-- View Switcher (List / Kanban / Matrix / Timeline) -->
+      <section class="view-switcher-section">
+        <div class="view-tabs-pill glass-pill-container-sm">
+          <button class="view-tab-btn active" data-view="list">
+            <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            List
+          </button>
+          <button class="view-tab-btn" data-view="kanban">
+            <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="5" height="18" rx="1"></rect>
+              <rect x="10" y="3" width="5" height="12" rx="1"></rect>
+              <rect x="17" y="3" width="5" height="15" rx="1"></rect>
+            </svg>
+            Kanban
+          </button>
+          <button class="view-tab-btn" data-view="matrix">
+            <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="8" height="8" rx="1"></rect>
+              <rect x="13" y="3" width="8" height="8" rx="1"></rect>
+              <rect x="3" y="13" width="8" height="8" rx="1"></rect>
+              <rect x="13" y="13" width="8" height="8" rx="1"></rect>
+            </svg>
+            Matrix
+          </button>
+          <button class="view-tab-btn" data-view="timeline">
+            <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Timeline
+          </button>
         </div>
       </section>
 
@@ -321,7 +444,7 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" id="search-tasks-input" placeholder="Search tasks or tags..." class="search-input" />
+          <input type="text" id="search-tasks-input" placeholder="Search tasks, notes or #tags... (Ctrl+K)" class="search-input" />
           <button class="clear-search-btn" id="clear-search-btn" style="display: none;">✕</button>
         </div>
 
@@ -345,7 +468,7 @@
         </div>
       </section>
 
-      <!-- Task List Area -->
+      <!-- Task Display Container (Handles List, Kanban, Matrix, Timeline) -->
       <section class="tasks-container">
         <!-- Empty State Card (Exact layout & aesthetic from image) -->
         <div class="glass-card empty-state-card" id="empty-state-card">
@@ -355,7 +478,7 @@
             </svg>
           </div>
           <h3 class="empty-title">No tasks yet</h3>
-          <p class="empty-subtitle">Add one above to get started</p>
+          <p class="empty-subtitle">Add one above or load a curated template</p>
           <div class="empty-presets-row">
             <button class="preset-btn" id="load-sample-btn">✨ Study Sprint</button>
             <button class="preset-btn" data-preset-quick="coding">💻 Coding Sprint</button>
@@ -363,20 +486,223 @@
           </div>
         </div>
 
-        <!-- Task List Items -->
+        <!-- 1. Default List View Items -->
         <ul class="task-list" id="task-list" aria-label="Task list"></ul>
+
+        <!-- 2. Kanban Board View Container -->
+        <div class="kanban-view" id="kanban-view" style="display: none;">
+          <div class="kanban-column" data-status="todo">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">📋 To Do</span>
+              <span class="kanban-col-count" id="kanban-count-todo">0</span>
+            </div>
+            <div class="kanban-card-list" id="kanban-list-todo"></div>
+          </div>
+
+          <div class="kanban-column" data-status="in-progress">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">⚡ In Progress</span>
+              <span class="kanban-col-count" id="kanban-count-inprogress">0</span>
+            </div>
+            <div class="kanban-card-list" id="kanban-list-inprogress"></div>
+          </div>
+
+          <div class="kanban-column" data-status="done">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">✅ Completed</span>
+              <span class="kanban-col-count" id="kanban-count-done">0</span>
+            </div>
+            <div class="kanban-card-list" id="kanban-list-done"></div>
+          </div>
+        </div>
+
+        <!-- 3. Eisenhower Matrix View Container -->
+        <div class="matrix-view" id="matrix-view" style="display: none;">
+          <div class="matrix-quadrant q1">
+            <div class="quadrant-header">
+              <span class="quadrant-badge q1-badge">Q1: DO FIRST</span>
+              <span class="quadrant-desc">Urgent & Important</span>
+            </div>
+            <div class="matrix-card-list" id="matrix-list-q1"></div>
+          </div>
+
+          <div class="matrix-quadrant q2">
+            <div class="quadrant-header">
+              <span class="quadrant-badge q2-badge">Q2: SCHEDULE / FOCUS</span>
+              <span class="quadrant-desc">Important, Not Urgent</span>
+            </div>
+            <div class="matrix-card-list" id="matrix-list-q2"></div>
+          </div>
+
+          <div class="matrix-quadrant q3">
+            <div class="quadrant-header">
+              <span class="quadrant-badge q3-badge">Q3: QUICK WINS</span>
+              <span class="quadrant-desc">Urgent, Low Priority</span>
+            </div>
+            <div class="matrix-card-list" id="matrix-list-q3"></div>
+          </div>
+
+          <div class="matrix-quadrant q4">
+            <div class="quadrant-header">
+              <span class="quadrant-badge q4-badge">Q4: SOMEDAY / BACKLOG</span>
+              <span class="quadrant-desc">Neither Urgent nor Priority</span>
+            </div>
+            <div class="matrix-card-list" id="matrix-list-q4"></div>
+          </div>
+        </div>
+
+        <!-- 4. Timeline / Due Group View Container -->
+        <div class="timeline-view" id="timeline-view" style="display: none;">
+          <div class="timeline-group" id="tl-group-overdue">
+            <h4 class="timeline-group-header overdue-header">⚠️ Overdue</h4>
+            <div class="timeline-cards" id="tl-list-overdue"></div>
+          </div>
+
+          <div class="timeline-group" id="tl-group-today">
+            <h4 class="timeline-group-header today-header">🎯 Due Today</h4>
+            <div class="timeline-cards" id="tl-list-today"></div>
+          </div>
+
+          <div class="timeline-group" id="tl-group-tomorrow">
+            <h4 class="timeline-group-header tomorrow-header">⏳ Due Tomorrow</h4>
+            <div class="timeline-cards" id="tl-list-tomorrow"></div>
+          </div>
+
+          <div class="timeline-group" id="tl-group-upcoming">
+            <h4 class="timeline-group-header upcoming-header">🗓️ Later This Week / Upcoming</h4>
+            <div class="timeline-cards" id="tl-list-upcoming"></div>
+          </div>
+
+          <div class="timeline-group" id="tl-group-nodate">
+            <h4 class="timeline-group-header nodate-header">📝 No Due Date</h4>
+            <div class="timeline-cards" id="tl-list-nodate"></div>
+          </div>
+        </div>
       </section>
 
       <!-- Bottom Tagline matching screenshot -->
       <footer class="app-footer">
-        <p class="footer-tagline">SAVED LOCALLY · NO ACCOUNT NEEDED</p>
+        <p class="footer-tagline">SAVED LOCALLY · NO ACCOUNT NEEDED · STUDYFLOW PRO</p>
         <div class="keyboard-hints">
+          <span><kbd>Ctrl+K</kbd> Command Palette</span>
           <span><kbd>Enter</kbd> Add Task</span>
-          <span><kbd>/</kbd> Quick Search</span>
-          <span><kbd>Esc</kbd> Close</span>
+          <span><kbd>/</kbd> Search</span>
+          <span><kbd>Z</kbd> Zen Focus</span>
         </div>
       </footer>
     </main>
+  </div>
+
+  <!-- Floating Quick Scratchpad & Thought Dock -->
+  <button class="floating-scratchpad-btn" id="scratchpad-toggle-btn" title="Quick Notes & Scratchpad">
+    <span>📝</span>
+  </button>
+
+  <div class="scratchpad-drawer glass-card collapsed" id="scratchpad-drawer">
+    <div class="scratchpad-header">
+      <span class="scratchpad-title">📝 Quick Scratchpad</span>
+      <div class="scratchpad-actions">
+        <button class="scratchpad-mini-btn" id="scratchpad-to-task-btn" title="Convert top line into a Task">➕ Convert to Task</button>
+        <button class="scratchpad-close-btn" id="scratchpad-close-btn">✕</button>
+      </div>
+    </div>
+    <textarea class="scratchpad-textarea" id="scratchpad-textarea" placeholder="Jot down quick thoughts, formulas, ideas, or to-dos here... (Auto-saved)"></textarea>
+    <div class="scratchpad-footer">Auto-saved privately on device</div>
+  </div>
+
+  <!-- Command Palette (Ctrl+K) Floating Spotlight -->
+  <div class="command-palette-backdrop" id="command-palette-backdrop" style="display: none;">
+    <div class="command-palette-card glass-card">
+      <div class="command-palette-input-wrap">
+        <svg class="palette-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="command-palette-input" class="command-input" placeholder="Type a command, theme, or search tasks... (Esc to exit)" autocomplete="off" />
+        <kbd class="palette-kbd">Esc</kbd>
+      </div>
+      <div class="command-results-list" id="command-results-list"></div>
+    </div>
+  </div>
+
+  <!-- Gamification Level & Badges Modal -->
+  <div class="modal-backdrop" id="gamification-modal-backdrop">
+    <div class="modal-card glass-card gamification-modal-content" role="dialog">
+      <div class="bottom-sheet-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h3>Mastery & Level Progress</h3>
+        <button class="modal-close-btn" id="gamification-close-btn">✕</button>
+      </div>
+      <div class="gamification-hero">
+        <div class="level-crown-circle">
+          <span class="crown-icon">👑</span>
+          <span class="level-big-num" id="modal-level-num">1</span>
+        </div>
+        <h4 class="level-title-text" id="modal-level-title">Novice Flow</h4>
+        <p class="level-xp-text" id="modal-level-xp">0 / 200 XP</p>
+        <div class="level-progress-bar">
+          <div class="level-progress-fill" id="modal-level-fill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="badges-shelf-header">
+        <h4>Achievement Badges</h4>
+        <span class="badges-count-text" id="badges-unlocked-count">0 / 7 Unlocked</span>
+      </div>
+      <div class="badges-grid" id="badges-grid"></div>
+    </div>
+  </div>
+
+  <!-- Active Recall Flashcards Mode Modal -->
+  <div class="modal-backdrop" id="flashcards-modal-backdrop">
+    <div class="modal-card glass-card flashcard-modal-content" role="dialog">
+      <div class="bottom-sheet-handle" aria-hidden="true"></div>
+      <div class="modal-header">
+        <h3>🎴 Active Recall Flashcards</h3>
+        <button class="modal-close-btn" id="flashcards-close-btn">✕</button>
+      </div>
+      <div class="flashcard-scene" id="flashcard-scene">
+        <div class="flashcard-inner" id="flashcard-inner">
+          <div class="flashcard-face flashcard-front">
+            <span class="flashcard-tag" id="fc-category">Study</span>
+            <h3 class="flashcard-prompt" id="fc-front-title">Task title here</h3>
+            <span class="flashcard-tap-hint">Click card or press Space to flip ↺</span>
+          </div>
+          <div class="flashcard-face flashcard-back">
+            <span class="flashcard-tag" id="fc-back-tag">Action Steps & Notes</span>
+            <div class="flashcard-answer-body" id="fc-back-body"></div>
+            <span class="flashcard-tap-hint">Click card to flip back</span>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-controls">
+        <button class="pomo-btn secondary" id="fc-prev-btn">◀ Prev</button>
+        <button class="pomo-btn primary" id="fc-gotit-btn">✓ Got it! (+15 XP)</button>
+        <button class="pomo-btn secondary" id="fc-next-btn">Next ▶</button>
+      </div>
+      <div class="flashcard-counter" id="fc-counter">Card 1 of 1</div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Zen Distraction-Free Overlay -->
+  <div class="zen-overlay" id="zen-overlay" style="display: none;">
+    <button class="zen-exit-btn" id="zen-exit-btn" title="Exit Zen Mode">✕ Exit Zen</button>
+    
+    <div class="zen-container">
+      <div class="zen-breathing-ring"></div>
+      <div class="zen-timer-wrap">
+        <div class="zen-timer-display" id="zen-timer-display">25:00</div>
+        <div class="zen-mode-badge" id="zen-mode-badge">FOCUS SESSION</div>
+      </div>
+
+      <div class="zen-task-title" id="zen-task-title">Deep Work Session</div>
+      <div class="zen-quote" id="zen-quote">"Focus is a muscle. The more you practice, the stronger it gets."</div>
+
+      <div class="zen-controls">
+        <button class="pomo-btn primary" id="zen-toggle-btn">Start Focus</button>
+        <button class="pomo-btn secondary" id="zen-reset-btn">Reset</button>
+        <button class="pomo-btn secondary" id="zen-sound-toggle-btn">🔊 Ambient Sound</button>
+      </div>
+    </div>
   </div>
 
   <!-- Edit Task Modal -->
@@ -416,13 +742,40 @@
         </div>
         <div class="form-row">
           <div class="form-group">
+            <label for="edit-task-status">Status</label>
+            <select id="edit-task-status" class="glass-select">
+              <option value="todo">📋 To Do</option>
+              <option value="in-progress">⚡ In Progress</option>
+              <option value="done">✅ Completed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-task-recurring">Recurrence</label>
+            <select id="edit-task-recurring" class="glass-select">
+              <option value="none">Single Task</option>
+              <option value="daily">🔁 Daily</option>
+              <option value="weekdays">💼 Weekdays (Mon-Fri)</option>
+              <option value="weekly">📅 Weekly</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
             <label for="edit-task-due">Due Date</label>
             <input type="date" id="edit-task-due" class="glass-date-input" />
           </div>
           <div class="form-group">
-            <label for="edit-task-pomos">Target Pomodoros</label>
+            <label for="edit-task-pomos">Target Focus Blocks</label>
             <input type="number" id="edit-task-pomos" min="1" max="10" value="1" class="glass-input" />
           </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-task-tags">Tags (comma or space separated)</label>
+          <input type="text" id="edit-task-tags" class="glass-input" placeholder="#exam #urgent" />
+        </div>
+        <div class="form-group">
+          <label for="edit-task-notes">Notes / Links</label>
+          <textarea id="edit-task-notes" class="glass-textarea" rows="2" placeholder="Add study notes, references, or instructions..."></textarea>
         </div>
         <div class="modal-actions">
           <button type="button" class="pomo-btn secondary" id="edit-modal-cancel">Cancel</button>
@@ -458,9 +811,31 @@
           <span class="stat-name">Current Streak</span>
         </div>
       </div>
+
+      <!-- 7-Day Completion Bar Chart -->
+      <div class="stats-chart-section">
+        <h4>Past 7 Days Activity</h4>
+        <div class="weekly-bars-container" id="weekly-bars-container"></div>
+      </div>
+
+      <!-- 30-Day Activity Heatmap Grid -->
+      <div class="stats-chart-section">
+        <div class="heatmap-header-row">
+          <h4>30-Day Activity Heatmap</h4>
+          <span class="heatmap-legend">Less <span class="h-dot l0"></span><span class="h-dot l1"></span><span class="h-dot l2"></span><span class="h-dot l3"></span> More</span>
+        </div>
+        <div class="heatmap-grid" id="heatmap-grid"></div>
+      </div>
+
       <div class="category-breakdown">
         <h4>Task Distribution by Category</h4>
         <div id="category-bars-list" class="category-bars-list"></div>
+      </div>
+
+      <div class="stats-export-row">
+        <button class="pomo-btn secondary" id="print-agenda-btn">🖨️ Print Daily Agenda</button>
+        <button class="pomo-btn secondary" id="export-markdown-btn">📝 Export Markdown</button>
+        <button class="pomo-btn secondary" id="export-csv-btn">📊 Export CSV</button>
       </div>
     </div>
   </div>
@@ -477,9 +852,9 @@
         <p class="settings-desc">Your StudyFlow data is stored privately on your device. You can export a snapshot backup anytime or load preset templates.</p>
         
         <div class="settings-action-row">
-          <button class="pomo-btn secondary" id="export-data-btn">📥 Export Backup (JSON)</button>
+          <button class="pomo-btn secondary" id="export-data-btn">📥 Export JSON Backup</button>
           <label class="pomo-btn secondary file-upload-label">
-            📤 Restore Backup
+            📤 Restore JSON Backup
             <input type="file" id="import-data-input" accept=".json" style="display:none;" />
           </label>
         </div>
@@ -503,6 +878,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Floating XP popup container -->
+  <div class="xp-toast-container" id="xp-toast-container"></div>
 
   <!-- Toast Notification Container -->
   <div class="toast-container" id="toast-container"></div>

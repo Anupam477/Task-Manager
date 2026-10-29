@@ -78,6 +78,7 @@ export class PomodoroTimer {
 
     if (this.currentMode === 'focus') {
       StorageManager.addFocusMinutes(25);
+      StorageManager.incrementFocusSession();
     }
 
     if (this.onComplete) {
