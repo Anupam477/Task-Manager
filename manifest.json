@@ -1,0 +1,23 @@
+{
+  "name": "StudyFlow Pro — Task & Study Suite",
+  "short_name": "StudyFlow",
+  "description": "Intelligent glassmorphic task manager with Pomodoro timer, ambient sounds, custom audio, and gamification.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#cadff3",
+  "theme_color": "#cadff3",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2338bdf8'/><path d='M30 52 L44 66 L72 36' fill='none' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%2338bdf8'/><path d='M30 52 L44 66 L72 36' fill='none' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+
